@@ -1,5 +1,5 @@
-import discord
 import configparser
+from discord.ext import commands
 
 # configファイルの読み込み
 config = configparser.ConfigParser()
@@ -10,27 +10,25 @@ TOKEN = config.get('discord', 'TOKEN')
 text_id = config.get('channel', 'text_test')
 voice_id = config.get('channel', 'voice_test')
 
-client = discord.Client()
+bot = commands.Bot(command_prefix='$')
 
-@client.event
+@bot.event
 async def on_ready():
-    print('ログインしました')
+    print("ログインしました。")
 
+@bot.command()
+async def neko(ctx):
+    await ctx.send('にゃーん')
 
-@client.event
-async def on_message(message):
-    if message.author.bot:
-        return
-    if message.content == '/neko':
-        await message.channel.send('にゃーん')
+# move!!!!
+'''
+@bot.event
+async def on_voice_state_update(before, after):
+    if before.voice_channel is None:
+        alert_channel = bot.get_channel(text_id)
+        name = after.name
+        msg = f'{name}が参加しました。'
+        await alert_channel.send(msg)
+'''
 
-# ToDo 動かないヨ
-@client.event
-async def on_voice_state_update(member, before, after):
-    if after.server.id == voice_id:
-        channel = client.get_channel(text_id)
-        text = member.name + 'さんが参加しました。'
-        await channel.send(text)
-
-
-client.run(TOKEN)
+bot.run(TOKEN)
